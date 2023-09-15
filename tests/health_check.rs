@@ -25,8 +25,12 @@ async fn health_check_works(){
 }
 
 // Launch out application in the background ~somehow~
-fn spawn_app(){
-    let server = zero2prod::run().expect("Failed to bind address.");
+fn spawn_app()-> String{
+    let listenenr = std::net::TcpListener::bind("127.0.0.1:0").expect("Failed to bind random port");
+
+    let port = listener.local_addr().unwrap().port();
+    // writeing below !!!!!!!
+    let server = zero2prod::run("127.0.0.1:0").expect("Failed to bind address.");
 
     let _ = tokio::spawn(server);
 }
