@@ -1,13 +1,28 @@
 use sqlx::{PgPool, Connection, Executor, PgConnection};
 use zero2prod::startup;
 use zero2prod::configuration::{get_configuration, DatabaseSettings};
+use zero2prod::telemetry::{get_subscriber, init_subscriber};
 use std::net::TcpListener;
 use uuid::Uuid;
+use once_cell::sync::Lazy;
 // `tokio::test` is the testing equivalent of `tokio::main`.
 // It also spares you from having to specify the `#[test]` attribute.
 //
 // You can inspect what code gets generated using 
 // `cargo expand --test health_check` (<- name of the test file)
+
+// Ensure that the `tracing` stack is only initialize once
+static TRACING: Lazy<()> = Lazy::new(||{
+    let default_filter_level = "info".to_string();
+    let subscriber_name = "test".to_string();
+    if std::env::var("TEST_LOG").is_ok(){
+        let subscriber = get_subscriber(subscriber_name, default_filter_level, std::io::stdout);
+        init_subscriber(subscriber);
+    }else {
+        let subscriber = get_subscriber(subscriber_name, default_filter_level, std::io::sink);
+        init_subscriber(subscriber);
+    }
+});
 
 pub struct TestApp{
     pub address: String,
@@ -36,6 +51,9 @@ async fn health_check_works(){
 
 // Launch out application in the background ~somehow~
  async fn spawn_app()-> TestApp{
+    
+    Lazy::force(&TRACING);
+
     let listener = TcpListener::bind("127.0.0.1:0").expect("Failed to bind random port");
 
     let port = listener.local_addr().unwrap().port();
@@ -44,9 +62,9 @@ async fn health_check_works(){
     let mut configuration = get_configuration().expect("Failed to read configuration.");
     configuration.database.database_name = Uuid::new_v4().to_string();
     let connection_pool = configure_database(&configuration.database).await;
+
     let server = startup::run(listener, connection_pool.clone()).expect("Failed to bind address.");
     let _ = tokio::spawn(server);
-
     TestApp{
         address,
         db_pool: connection_pool

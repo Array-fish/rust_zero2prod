@@ -904,6 +904,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "help"
+version = "0.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b5d2c6714f78261bbacbd07338eb21943fa5a25c67760287aecb6aefbec89062"
+
+[[package]]
 name = "hermit-abi"
 version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2919,13 +2925,16 @@ dependencies = [
  "chrono",
  "config",
  "env_logger",
+ "help",
  "log",
+ "once_cell",
  "reqwest",
  "serde",
  "sqlx",
  "tokio",
  "tracing",
  "tracing-bunyan-formatter",
+ "tracing-log",
  "tracing-subscriber",
  "uuid",
 ]
