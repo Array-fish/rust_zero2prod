@@ -23,8 +23,8 @@ name = "zero2prod"
 actix-web = "^4.4.0"
 chrono = "0.4.31"
 config = "0.13.3"
-env_logger = "0.10.0"
-help = "0.0.0"
+# env_logger = "0.10.0"
+# help = "0.0.0"
 log = "0.4.20"
 secrecy = { version = "0.8.0", features = ["serde"]}
 serde = { version = "1.0.188", features = ["derive"]}
