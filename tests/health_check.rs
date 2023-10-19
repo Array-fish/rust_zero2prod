@@ -5,7 +5,6 @@ use zero2prod::telemetry::{get_subscriber, init_subscriber};
 use std::net::TcpListener;
 use uuid::Uuid;
 use once_cell::sync::Lazy;
-use secrecy::ExposeSecret;
 // `tokio::test` is the testing equivalent of `tokio::main`.
 // It also spares you from having to specify the `#[test]` attribute.
 //
