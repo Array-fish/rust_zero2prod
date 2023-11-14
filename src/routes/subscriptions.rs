@@ -37,15 +37,6 @@ pub async fn subscribe(
     }
 }
 
-pub fn is_valid_name(s: &str) -> bool{
-    let is_empty_or_whitespace = s.trim().is_empty();
-    let is_too_long = s.graphemes(true).count() > 256;
-    let forbidden_characters = ['/', '(', ')', '"', '<', '>', '\\', '{', '}'];
-    let contains_forbidden_charactors = s.chars().any(|g| forbidden_characters.contains(&g));
-
-    !(is_empty_or_whitespace || is_too_long || contains_forbidden_charactors)
-}
-
 #[tracing::instrument(
     name = "Saving new subscriber details in the database",
     skip(new_subscriber, pool),
@@ -61,7 +52,7 @@ pub async fn insert_subscriber(
         "#,
         Uuid::new_v4(),
         new_subscriber.email,
-        new_subscriber.name,
+        new_subscriber.name.as_ref(),
         Utc::now()
     ).execute(pool)
     .await
